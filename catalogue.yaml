@@ -1,4 +1,4 @@
-  - name: Install catalogue component
+- name: Install catalogue component
   hosts: catalogue
   become: yes
   tasks:
@@ -20,8 +20,6 @@
     become: yes # we need sudo access for this task only
     ansible.builtin.user:
       name: roboshop
-
-      
 
   - name: check /app directory exists or not
     ansible.builtin.stat:
@@ -74,16 +72,10 @@
       state: installed
 
   - name: load catalogue data
-    ansible.builtin.command: mongo --host mongodb.sailasdevops.online < /app/schema/catalogue.js
+    ansible.builtin.command: mongo --host mongodb.joindevops.online < /app/schema/catalogue.js
 
   - name: restart catalogue
     ansible.builtin.service:
       name: catalogue
       state: restarted
       enabled: true
-
-  
-
-  
-
-  
