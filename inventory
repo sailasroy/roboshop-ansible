@@ -9,3 +9,9 @@ cart.sailasdevops.online
 
 [web]
 web.sailasdevops.online
+
+[user]
+user.sailasdevops.online
+
+[redis]
+redis.sailasdevops.online
