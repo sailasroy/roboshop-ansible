@@ -1,0 +1,92 @@
+- name: Installing catalogue components
+  hosts: catalogue
+  become: yes
+  tasks:
+  - name: Setting up NPM source
+    ansible.builtin.shell: curl -sL https://rpm.nodesource.com/setup_lts.x | bash
+
+  - name: Install Node.js
+    ansible.builtin.yum:
+      name: nodejs 
+      state: installed
+  
+  - name: Checking roboshop user exists or not
+    ansible.builtin.command: id roboshop
+      register: out
+      ignore_errors: yes
+
+  - when: out.rc != 0
+    name: Create user roboshop
+    ansible.builtin.user:
+      name: roboshop
+
+  - name: Check if app directory exists or not
+    ansible.bulitin.stat: ## checking the status of app directory
+      path: /app
+      register: directory
+
+  - name: Print directory stats
+    ansible.builtin.debug:
+      msg: "outputis : {{directory}}"
+
+  - when: directory.stat.exists == false
+    name: Create app directory
+    ansible.builtin.file:
+      path: /app
+      status: directory
+
+
+  - name: Download the catalogue artifact
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/catalogue.zip
+      dest: /tmp
+
+  - name: Extract catalogue artifact
+    ansible.builtin.unarchive:
+      src: /tmp/catalogue.zip
+      dest: /app
+      remote_src: yes
+
+  - name: Install dependencies
+    ansible.builtin.command: npm install
+    args:
+      chdir: /app
+
+
+  - name: Copy catalogue.service
+    ansible.builtin.copy:
+      src: catalogue.service
+      dest: /etc/systemd/system/catalogue.service
+
+  - name: Daemon Reload
+    ansible.builtin.systemd:
+      daemon_reload: true
+
+  - name: copying mongo.repo
+    ansible.builtin.copy:
+      src: mongodb.repo
+      dest: /etc/yum.repos.d/mongo.repo
+
+
+  - name: Install Mongodb client
+    ansible.builtin.yum:
+      name: mongodb-org-shell
+      state: installed
+
+
+  - name: Load catalogue data
+    ansible.builtin.command: mongo --host mongodb.sailasdevops.online < /app/schema/catalogue.js
+
+
+  - name: Restart catalogue
+    ansible.builtin.service:
+      name: catalogue.service
+      state: restarted
+      enabled: true
+
+
+
+  
+
+
+  
