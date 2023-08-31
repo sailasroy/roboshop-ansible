@@ -1,0 +1,11 @@
+[mongodb]
+mongodb.sailasdevops.online
+
+[catalogue]
+catalogue.sailasdevops.online
+
+[cart]
+cart.sailasdevops.online
+
+[web]
+web.sailasdevops.online
