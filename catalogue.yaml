@@ -81,7 +81,7 @@
 
   - name: Restart catalogue
     ansible.builtin.service:
-      name: catalogue.service
+      name: catalogue
       state: restarted
       enabled: true
 
