@@ -1,8 +1,4 @@
-
-
-
-  
-- name: Install catalogue component
+  - name: Install catalogue component
   hosts: catalogue
   become: yes
   tasks:
