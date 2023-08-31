@@ -16,7 +16,7 @@
   - name: Starting the mongodb server
     ansible.builtin.service:
       name: mongod
-      state: Started
+      state: started
       enabled: yes
   
   - name: Enable remote connections to mongodb
