@@ -14,7 +14,7 @@
   - name: Installing redis
     ansible.builtin.yum:
       name: redis
-      status: installed
+      state: installed
 
   - name: Enable remote connections to redis
     ansible.builtin.replace:
