@@ -34,7 +34,7 @@
     name: Create app directory
     ansible.builtin.file:
       path: /app
-      status: directory
+      state: directory
 
 
   - name: Download the catalogue artifact
