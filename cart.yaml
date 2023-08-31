@@ -1,0 +1,87 @@
+- name: Install cart components
+  hosts: cart
+  become: yes
+  tasks:
+  - name: Install NPM source
+    ansible.builtin.shell: "curl -sL https://rpm.nodesource.com/setup_lts.x | bash"
+
+  - name: Install Nodejs
+    ansible.builtin.yum:
+      name: nodejs 
+      state: installed
+
+  - name: Checking whether roboshop cart exists
+    ansible.builtin.command: id roboshop
+    register: out
+    ignore_errors: true
+
+  - when: out.rc != 0
+    name: add roboshop cart
+    ansible.builtin.cart:
+      name: roboshop
+
+  - name: checking the app directory
+    ansible.builtin.stat: 
+      path: /app
+    register: directory
+
+  - name: Printing the stat
+    ansible.builtin.debug:
+      msg: "Output is : {{directory}}"
+
+  - when: directory.stat.exists == False
+    name: Create app directory
+    ansible.builtin.file:
+      path: /app
+      state: directory
+  
+  - name: Download the cart artifact
+    ansible.builtin.get_url:
+      url: https://roboshop-builds.s3.amazonaws.com/cart.zip
+      dest: /tmp
+
+  - name: Extracting the cart artifact
+    ansible.builtin.unarchive:
+      src: /tmp/cart.zip
+      dest: /app
+      remote_src: yes
+
+
+  - name: Installing dependencies
+    ansible.builtin.command: npm install 
+    args:
+      chdir: /app
+
+  - name: Copying cart.service
+    ansible.builtin.copy:
+      src: cart.service
+      dest: /etc/systemd/system/cart.service
+
+  - name: Daemon reload
+    ansible.builtin.systemd:
+      daemon_reload: true
+
+  - name: Starting and enabling cart
+    ansible.builtin.service:
+      name: cart
+      state: started
+      enabled: true
+
+  - name: Copying mongo repo
+    ansible.builtin.copy:
+      src: mongodb.repo
+      dest: /etc/yum.repos.d/mongo.repo
+
+  - name: Installing mongo client
+    ansible.builtin.yum:
+      name: mongodb-org-shell
+      state: installed
+
+  - name: Loading mongo schema
+    ansible.builtin.shell: mongo --host mongodb.sailasdevops.online </app/schema/cart.js
+
+  - name: Restart cart
+    ansible.builtin.service:
+      name: cart
+      state: restarted
+      enabled: true
