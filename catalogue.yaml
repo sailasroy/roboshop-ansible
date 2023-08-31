@@ -22,7 +22,7 @@
       name: roboshop
 
   - name: Check if app directory exists or not
-    ansible.bulitin.stat: ## checking the status of app directory
+    ansible.builtin.stat: ## checking the status of app directory
       path: /app
     register: directory
 
