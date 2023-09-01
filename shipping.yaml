@@ -1,0 +1,76 @@
+- name: Installing shipping components
+  hosts: shipping
+  become: yes
+  tasks:
+  - name: Installing maven
+    ansible.builtin.yum:
+      name: maven
+      state: installed
+  
+  - name: Check if the user roboshop exists
+    ansible.builtin.command: id roboshop
+    register: out
+    ignore_errors: true
+
+  - when out.rc != o
+    name: Add roboshop user
+    ansible.builtin.user:
+      name: roboshop
+
+  - name: Check if the app directory exists
+    ansible.builtin.stat:
+      path: /app
+    register: directory
+
+  - name: Printing the stat
+    ansible.builtin.debug:
+      msg: "output is {{directory}}"
+
+  - when directory.stat.exists == False
+    name: create app directory
+    ansible.builtin.file:
+      name: /app
+      state: directory
+
+  # - name: Downloading the shipping artifact
+  #   ansible.builtin.get_url:
+  #     url: https://roboshop-builds.s3.amazonaws.com/shipping.zi
+  #     dest: /tmp
+
+  - name: Downloading and Unzipping the shipping artifact
+    ansible.builtin.archive:
+      src: https://roboshop-builds.s3.amazonaws.com/shipping.zip
+      dest: /app
+      remote_src: yes ## Must use while unzipping from remote/ansible to another server
+
+  - name: Installing Dependencies
+    ansible.builtin.comand: mvn clean package
+    args: 
+      chdir: /app ## need to use for installing through remote/ansible
+
+  - name: Rename jar and copy the jar file
+    ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
+    args: 
+      chdir: /app
+
+  - name: Copying Shipping service
+    ansible.builtin.copy:
+      src: shipping.service
+      dest: /etc/systemd/system/shipping.service
+
+
+  - name: Daemon Reload
+    ansible.builtin.systemd:
+      daemon_reload: true
+  
+  
+
+
+  
+
+
+  
+  
+  
+
+
