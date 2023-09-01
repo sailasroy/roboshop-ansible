@@ -38,7 +38,7 @@
   #     dest: /tmp
 
   - name: Downloading and Unzipping the shipping artifact
-    ansible.builtin.archive:
+    ansible.builtin.unarchive:
       src: https://roboshop-builds.s3.amazonaws.com/shipping.zip
       dest: /app
       remote_src: yes ## Must use while unzipping from remote/ansible to another server
