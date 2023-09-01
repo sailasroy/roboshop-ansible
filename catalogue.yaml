@@ -86,16 +86,4 @@
       state: restarted
       enabled: true
 
-  - name: install mysql clinet
-    ansible.builtin.yum:
-      name: mysql
-      state: Installed
-  
-  - name: loading the schema
-    ansible.builtin.shell: mysql -h mysql.sailasdevops.online -uroot -pRoboShop@1 < /app/schema/shipping.sql
 
-  - name: Restarting Shiipin service
-    ansible.builtin.service:
-      name: shipping
-      state: restarted
-      enabled: yes 
