@@ -12,7 +12,7 @@
     register: out
     ignore_errors: true
 
-  - when out.rc != o
+  - when: out.rc != o
     name: Add roboshop user
     ansible.builtin.user:
       name: roboshop
@@ -63,7 +63,7 @@
     ansible.builtin.systemd:
       daemon_reload: true
   
-  
+
 
 
   
