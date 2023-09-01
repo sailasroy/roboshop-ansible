@@ -12,7 +12,7 @@
     register: out
     ignore_errors: true
 
-  - when: out.rc != o
+  - when: out.rc != 0
     name: Add roboshop user
     ansible.builtin.user:
       name: roboshop
