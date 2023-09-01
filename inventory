@@ -15,3 +15,18 @@ user.sailasdevops.online
 
 [redis]
 redis.sailasdevops.online
+
+[mysql]
+mysql.sailasdevops.online
+
+
+[shipping]
+shipping.sailasdevops.online
+
+
+[rabbitmq]
+rabbitmq.sailasdevops.online
+
+
+[payments]
+payments.sailasdevops.online
