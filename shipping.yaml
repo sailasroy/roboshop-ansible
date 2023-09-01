@@ -62,7 +62,7 @@
     ansible.builtin.systemd:
       daemon_reload: true
     
-    - name: install mysql clinet
+  - name: install mysql clinet
     ansible.builtin.yum:
       name: mysql
       state: Installed
